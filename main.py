@@ -87,12 +87,12 @@ try:
 
                 if count_0 == 200:
                     print("\nTriggering flip left...")
-                    # telloFlip_l()
+                    tello.flip('l')
                     count_0 = 0  # Reset count after triggering
 
                 if count_1 == 200:
                     print("\nTriggering flip right...")
-                    # telloFlip_r()
+                    tello.flip('r')
                     count_1 = 0  # Reset count after triggering
 
                 buffer.pop(0)  # Remove oldest sample (sliding window)
