@@ -1,0 +1,70 @@
+"""
+Guide to Running Two Tello Drones with a Muse 2 Headset Using the Provided Code
+------------------------------------------------------------------------------
+
+1. Prepare Your Drones
+   - Power up each Tello Edu drone.
+   - Set each drone to AP Mode using the provided set-ap-mode.py script.
+     Example:
+         python set-ap-mode.py -s "Walking BCD" -p "Alexander"
+   - Confirm that the drone responds with “ok” messages, which indicates that the drone is in AP mode.
+     (AP Mode means the drone is acting as a Wi‑Fi client and is ready for swarm programming.)
+
+2. Set Up Your Computer Environment
+   - Ensure you have Python 3.7 or higher installed.
+   - Install the required Python packages:
+         conda install -y -c conda-forge netifaces netaddr
+         pip install muselsl
+     (The 'muselsl' library is used for streaming EEG data from the Muse 2 headset.)
+   - Connect your Muse 2 headset to your computer via Bluetooth.
+   - Verify that your Muse 2 is streaming EEG data (for example, by using the muselsl stream command).
+
+3. Run the Swarm Programming Code
+   - Create a command file (e.g., cmds-01.txt) containing the commands for the drones.
+     Example command file contents:
+         scan 2
+         battery_check 20
+         1>takeoff
+         2>takeoff
+         delay 5
+         1>land
+         2>land
+   - Run the planned-flight.py program with the command file:
+         python planned-flight.py -f cmds-01.txt
+     This program uses the TelloManager and related classes to send commands from the file to the drones.
+
+4. Integrate Muse 2 EEG Data for Control
+   - Use a Python library (such as muselsl) to stream EEG data from the Muse 2 headset.
+   - Write or modify a Python script that:
+       * Reads the EEG data from the Muse 2.
+       * Processes the EEG signals to detect specific patterns (e.g., a blink or concentration threshold).
+       * Maps the detected signal to a Tello command (for example, a blink might trigger "takeoff" or "land").
+       * Uses the Tello or TelloManager objects to send the corresponding command to the drones.
+     Example:
+         if blink_detected:
+             drone1.send_command("takeoff")
+             drone2.send_command("takeoff")
+     This script acts as the bridge between your Muse 2 headset input and the swarm commands.
+
+5. Run Your Integrated Control Program
+   - Launch your integration script that ties together EEG data reading and Tello swarm control.
+   - As you generate EEG signals (by blinking or focusing), your program should interpret these signals and send the mapped commands to both drones.
+   - Monitor console output or log files to confirm that the commands are sent and that the drones respond correctly.
+
+6. Safety and Testing
+   - Always test your setup in a safe, open environment free of obstacles.
+   - Start with simple commands (such as takeoff and land) to ensure your EEG-to-command mapping works as expected.
+   - Calibrate your EEG signal processing thresholds until you achieve reliable control over the drones.
+   - Gradually introduce more complex control commands once you’re confident in the system’s reliability.
+
+Summary:
+-------------
+1. Set each Tello drone to AP Mode using the provided script.
+2. Ensure your computer environment is set up with the required Python version and libraries.
+3. Create and run a command file using the planned-flight.py program.
+4. Connect your Muse 2 headset and stream EEG data.
+5. Develop a script that maps EEG signals to Tello commands and integrates with the swarm code.
+6. Test your system in a controlled, safe environment and calibrate your controls.
+
+This guide provides a straightforward roadmap to integrate the provided swarm code with your Muse 2 headset to control two Tello drones simultaneously.
+"""
