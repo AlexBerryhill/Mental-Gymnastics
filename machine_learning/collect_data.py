@@ -8,7 +8,7 @@ from tqdm import tqdm
 
 # Settings
 CLASS_LABELS = {0: "Left", 1: "Right", 2: "Open"}  # Update with real classes
-SAMPLE_DURATION = 300  # Duration to collect per class (seconds)
+SAMPLE_DURATION = 30  # Duration to collect per class (seconds)
 FS = 256  # Sampling rate (adjust based on your EEG device)
 
 # Resolve EEG stream
