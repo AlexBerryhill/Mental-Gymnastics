@@ -1,6 +1,6 @@
 import time
 import sys
-from swarm import TelloManager  # Assumes your swarm classes (TelloManager, etc.) are in swarm.py
+from tellomanager import TelloManager  # Assumes your swarm classes (TelloManager, etc.) are in swarm.py
 
 def mirror_command(command: str) -> str:
     """
