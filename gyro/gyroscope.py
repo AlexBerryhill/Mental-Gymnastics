@@ -7,7 +7,7 @@ import numpy as np
 # Constants
 ALPHA = 0.98  # Complementary filter coefficient (higher = trust gyro more)
 DT = 0.1  # Time step in seconds (adjust based on your data rate)
-MOVEMENT_THRESHOLD = 15  # Minimum angle change to detect movement
+MOVEMENT_THRESHOLD = 5  # Minimum angle change to detect movement
 
 # Resolve gyroscope and accelerometer streams
 gyro_stream = resolve_stream('type', 'Gyroscope')
@@ -59,10 +59,10 @@ try:
 
         # if angle_change > MOVEMENT_THRESHOLD:
         #     print("\rMove down!                                                             \n", end = "")
-        if angle_change_z < (-MOVEMENT_THRESHOLD*1):
+        if angle_change_z < (-MOVEMENT_THRESHOLD*.5):
             print("\rTurning Right!                                                           \n", end = "")
 
-        if angle_change_z > (MOVEMENT_THRESHOLD*1):
+        if angle_change_z > (MOVEMENT_THRESHOLD*.5):
             print("\rTurning left!                                                            \n", end = "")
         # if angle_change > (MOVEMENT_THRESHOLD / 1.1):
         #     print("\rTurn Left!                                                                \n", end = "")
