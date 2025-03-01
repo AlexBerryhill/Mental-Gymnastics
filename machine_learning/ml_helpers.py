@@ -14,6 +14,9 @@ def extract_features(eeg_window, fs):
     
     for i in range(5):  # Loop through the 5 EEG sensor channels
         channel = eeg_window[:, i]
+        
+        # NaN is a zero
+        
 
         freqs, psd = welch(channel, fs=fs, nperseg=min(len(channel), fs))
         if np.sum(psd) == 0:
@@ -28,4 +31,7 @@ def extract_features(eeg_window, fs):
         ]
         features.extend(channel_features)
 
+    # Replace NaN values with 0
+    features = np.nan_to_num(features)
+    
     return features
