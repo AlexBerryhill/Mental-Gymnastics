@@ -5,6 +5,7 @@
 #
 # 1/1/2018
 
+# from djitellopy import tello      # optional library to add code
 import threading 
 import socket
 import sys
