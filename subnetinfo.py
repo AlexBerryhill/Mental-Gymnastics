@@ -62,3 +62,4 @@ class SubnetInfo:
         :return: A single list containing all IP addresses.
         """
         return list(itertools.chain.from_iterable(infos))
+ 
