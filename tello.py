@@ -2,6 +2,9 @@ import socket
 import threading
 import time
 
+
+# https://tello.oneoffcoder.com/python-manual-control.html
+
 class Tello(object):
     """
     Wrapper class to interact with the Tello drone.
@@ -258,11 +261,78 @@ class Tello(object):
         distance = float(distance)
 
         if self.imperial is True:
-            distance = int(round(distance * 30.48))
+            distance = (distance * 3.048)
         else:
-            distance = int(round(distance * 100))
+            distance = (distance * 10)
 
         return self.send_command(f'{direction} {distance}')
+    
+
+    # def move_backward(self):
+    #     """
+    #     Moves backward for a distance.
+
+    #     See comments for Tello.move().
+
+    #     :param distance: Distance to move.
+    #     :return: Response from Tello, 'OK' or 'FALSE'.
+    #     """
+    #     return self.move('back 100')
+
+    # def move_down(self):
+    #     """
+    #     Moves down for a distance.
+
+    #     See comments for Tello.move().
+
+    #     :param distance: Distance to move.
+    #     :return: Response from Tello, 'OK' or 'FALSE'.
+    #     """
+    #     return self.move('down 50')
+
+    # def move_forward(self):
+    #     """
+    #     Moves forward for a distance.
+
+    #     See comments for Tello.move().
+
+    #     :param distance: Distance to move.
+    #     :return: Response from Tello, 'OK' or 'FALSE'.
+    #     """
+    #     return self.move('forward 100')
+
+    # def move_left(self):
+    #     """
+    #     Moves left for a distance.
+
+    #     See comments for Tello.move().
+
+    #     :param distance: Distance to move.
+    #     :return: Response from Tello, 'OK' or 'FALSE'.
+    #     """
+    #     return self.move('left 100')
+
+    # def move_right(self):
+    #     """
+    #     Moves right for a distance.
+
+    #     See comments for Tello.move().
+
+    #     :param distance: Distance to move.
+    #     :return: Response from Tello, 'OK' or 'FALSE'.
+    #     """
+    #     return self.move('right 100')
+
+    # def move_up(self):
+    #     """
+    #     Moves up for a distance.
+
+    #     See comments for Tello.move().
+
+    #     :param distance: Distance to move.
+    #     :return: Response from Tello, 'OK' or 'FALSE'.
+    #     """
+    #     return self.move('up 50')
 
     def move_backward(self, distance):
         """
@@ -273,7 +343,13 @@ class Tello(object):
         :param distance: Distance to move.
         :return: Response from Tello, 'OK' or 'FALSE'.
         """
-        return self.move('back', distance)
+
+        # if self.imperial is True:
+        #     distance = float((distance / 30.48))
+        # else:
+        #     distance = float((distance / 100))
+
+        return self.move('back', (distance))
 
     def move_down(self, distance):
         """
@@ -284,7 +360,13 @@ class Tello(object):
         :param distance: Distance to move.
         :return: Response from Tello, 'OK' or 'FALSE'.
         """
-        return self.move('down', distance)
+
+        # if self.imperial is True:
+        #     distance = float((distance / 30.48))
+        # else:
+        #     distance = float((distance / 100))
+
+        return self.move('down', (distance))
 
     def move_forward(self, distance):
         """
@@ -295,7 +377,13 @@ class Tello(object):
         :param distance: Distance to move.
         :return: Response from Tello, 'OK' or 'FALSE'.
         """
-        return self.move('forward', distance)
+
+        # if self.imperial is True:
+        #     distance = float((distance / 30.48))
+        # else:
+        #     distance = float((distance / 100))
+
+        return self.move('forward', (distance))
 
     def move_left(self, distance):
         """
@@ -306,7 +394,13 @@ class Tello(object):
         :param distance: Distance to move.
         :return: Response from Tello, 'OK' or 'FALSE'.
         """
-        return self.move('left', distance)
+
+        # if self.imperial is True:
+        #     distance = float((distance / 30.48))
+        # else:
+        #     distance = float((distance / 100))
+
+        return self.move('left', (distance))
 
     def move_right(self, distance):
         """
@@ -317,7 +411,13 @@ class Tello(object):
         :param distance: Distance to move.
         :return: Response from Tello, 'OK' or 'FALSE'.
         """
-        return self.move('right', distance)
+
+        # if self.imperial is True:
+        #     distance = float((distance / 30.48))
+        # else:
+        #     distance = float((distance / 100))
+
+        return self.move('right', (distance))
 
     def move_up(self, distance):
         """
@@ -328,4 +428,44 @@ class Tello(object):
         :param distance: Distance to move.
         :return: Response from Tello, 'OK' or 'FALSE'.
         """
-        return self.move('up', distance)
+
+        # if self.imperial is True:
+        #     distance = float((distance / 30.48))
+        # else:
+        #     distance = float((distance / 100))
+
+        return self.move('up', (distance))
+    
+    def send_command(self, command):
+        """
+        Send a command to the Tello and wait for a response.
+
+        :param command: Command to send.
+        :return: Response from Tello.
+        """
+        print(f'>> send cmd: {command}')
+        self.abort_flag = False
+        timer = threading.Timer(self.command_timeout, self.set_abort_flag)
+
+        self.socket.sendto(command.encode('utf-8'), self.tello_address)
+
+        timer.start()
+        while self.response is None:
+            if self.abort_flag is True:
+                break
+        timer.cancel()
+        
+        if self.response is None:
+            response = 'none_response'
+        else:
+            response = self.response.decode('utf-8')
+
+        self.response = None
+
+        print(f'<< response: {response}')  # Debug print to check the response
+
+        return response
+    
+        # tello = Tello(local_ip='0.0.0.0', local_port=9000)
+        # response = tello.move_forward(50)  # Move forward by 50 centimeters
+        # print(f'Move forward response: {response}')

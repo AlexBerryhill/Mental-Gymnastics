@@ -6,6 +6,8 @@ import os
 import time
 import platform
 
+# https://tello.oneoffcoder.com/python-manual-control.html
+
 class TelloUI(object):
     """
     Wrapper class to enable the GUI.
@@ -116,10 +118,14 @@ class TelloUI(object):
         self.tmp_f.pack(side='bottom')
         self.tmp_f.focus_set()
 
-        self.btn_landing = tki.Button(
+        self.btn_flip = tki.Button(
             panel, text='Flip', relief='raised', command=self.openFlipWindow)
-        self.btn_landing.pack(side='bottom', fill='both',
+        self.btn_flip.pack(side='bottom', fill='both',
                               expand='yes', padx=10, pady=5)
+
+        # self.btn_flip = tki.Button(
+
+        # )
 
         self.distance_bar = Scale(panel, from_=0.02, to=5, tickinterval=0.01, 
                                   digits=3, label='Distance(m)',
@@ -170,6 +176,9 @@ class TelloUI(object):
             panel, text='Flip Backward', relief='raised', command=self.telloFlip_b)
         self.btn_flipb.pack(side='bottom', fill='both',
                             expand='yes', padx=10, pady=5)
+        
+    def telloFlip(self):
+        return self.tello.telloFlip_r()
 
     def telloTakeOff(self):
         return self.tello.takeoff()                
