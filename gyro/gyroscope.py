@@ -2,12 +2,15 @@ from machine_learning.eeg_helpers import resolve_stream
 from pylsl import StreamInlet
 import time
 import numpy as np
+from tello import Tello
 
 # Constants
 ALPHA = 0.98  # Complementary filter coefficient (higher = trust gyro more)
 DT = 0.1  # Time step in seconds (adjust based on your data rate)
 MOVEMENT_THRESHOLD = 5  # Minimum angle change to detect movement
 
+# Create an instance of the Tello class
+tello = Tello(local_ip='0.0.0.0', local_port=9000)
 
 def right_left_command(gyro_inlet, accel_inlet,angle_x, angle_y, angle_z, previous_angle_x, previous_angle_z):
     # Get gyroscope and accelerometer readings
@@ -38,9 +41,12 @@ def right_left_command(gyro_inlet, accel_inlet,angle_x, angle_y, angle_z, previo
     #     print("\rMove down!                                                             \n", end = "")
     if angle_change_z < (-MOVEMENT_THRESHOLD*.5):
         print("\rTurning Right!                                                           \n", end = "")
+        tello.rotate_cw(90)  # Rotate clockwise by 30 degrees
 
     if angle_change_z > (MOVEMENT_THRESHOLD*.5):
         print("\rTurning left!                                                            \n", end = "")
+        tello.rotate_ccw(120)  # Rotate counter-clockwise by 30 degrees
+
     # if angle_change > (MOVEMENT_THRESHOLD / 1.1):
     #     print("\rTurn Left!                                                                \n", end = "")
     # elif angle_change < -MOVEMENT_THRESHOLD:
