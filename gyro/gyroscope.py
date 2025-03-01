@@ -11,6 +11,8 @@ MOVEMENT_THRESHOLD = 5  # Minimum angle change to detect movement
 
 # Create an instance of the Tello class
 tello = Tello(local_ip='0.0.0.0', local_port=9000)
+last_descision = 'none'
+cumulative_angle = 0
 
 def right_left_command(gyro_inlet, accel_inlet,angle_x, angle_y, angle_z, previous_angle_x, previous_angle_z):
     # Get gyroscope and accelerometer readings
@@ -38,14 +40,28 @@ def right_left_command(gyro_inlet, accel_inlet,angle_x, angle_y, angle_z, previo
     angle_change_z = angle_z - previous_angle_z
 
     # if angle_change > MOVEMENT_THRESHOLD:
-    #     print("\rMove down!                                                             \n", end = "")
+    #     print("\rMove down!  
+    #                                                            \n", end = "")
+
+    if not (angle_change_z < (-MOVEMENT_THRESHOLD*.5)) and last_descision == 'right':
+        print("\rTurning Right!                                                           \n", end = "")
+        tello.rotate_cw(cumulative_angle)  # Rotate clockwise
+        cumulative_angle = 0
+    elif not (angle_change_z > (MOVEMENT_THRESHOLD*.5)) and last_descision == 'left':
+        print("\rTurning left!                                                            \n", end = "")
+        tello.rotate_ccw(cumulative_angle)  # Rotate counter-clockwise
+        cumulative_angle = 0
+
     if angle_change_z < (-MOVEMENT_THRESHOLD*.5):
         print("\rTurning Right!                                                           \n", end = "")
-        tello.rotate_cw(90)  # Rotate clockwise by 30 degrees
-
-    if angle_change_z > (MOVEMENT_THRESHOLD*.5):
+        cumulative_angle += angle_change_z
+        last_descision = 'right'
+        # tello.rotate_cw(90)  # Rotate clockwise by 30 degrees
+    elif angle_change_z > (MOVEMENT_THRESHOLD*.5):
         print("\rTurning left!                                                            \n", end = "")
-        tello.rotate_ccw(120)  # Rotate counter-clockwise by 30 degrees
+        cumulative_angle += angle_change_z
+        last_descision = 'left'
+        # tello.rotate_ccw(120)  # Rotate counter-clockwise by 30 degrees
 
     # if angle_change > (MOVEMENT_THRESHOLD / 1.1):
     #     print("\rTurn Left!                                                                \n", end = "")
