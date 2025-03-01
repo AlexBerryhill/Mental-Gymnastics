@@ -3,6 +3,7 @@ import joblib
 from pylsl import StreamInlet
 from machine_learning.eeg_helpers import resolve_stream
 from machine_learning.ml_helpers import extract_features
+from gyro.gyroscope import right_left_command
 # from ui import telloFlip_l, telloFlip_r
 
 # Load trained model & scaler
@@ -23,11 +24,38 @@ print("EEG stream connected.")
 buffer = []  # Stores 256 samples
 count_0 = 0
 count_1 = 0
+    
+
+# Resolve gyroscope and accelerometer streams
+gyro_stream = resolve_stream('type', 'Gyroscope')
+accel_stream = resolve_stream('type', 'Accelerometer')
+
+gyro_inlet = StreamInlet(gyro_stream[0])
+accel_inlet = StreamInlet(accel_stream[0])
+
+# Initialize angles
+angle_x, angle_y, angle_z = 0.0, 0.0, 0.0  # Roll, Pitch, Yaw
+
+# Get initial accelerometer readings for a baseline
+accel_sample, _ = accel_inlet.pull_sample()
+ax, ay, az = accel_sample
+
+# Convert accelerometer data to initial angles
+angle_x = np.arctan2(ay, az) * (180 / np.pi)
+angle_y = np.arctan2(ax, np.sqrt(ay**2 + az**2)) * (180 / np.pi)
+
+print("Starting angles: X (Roll):", angle_x, "Y (Pitch):", angle_y, "Z (Yaw):", angle_z)
+
+previous_angle_x = angle_x  # Store initial angle for comparison
+previous_angle_z = angle_z  # Store initial yaw angle for movement detection
+
 
 try:
     while True:
         sample, timestamp = inlet.pull_sample()
         
+        right_left_command(gyro_inlet, accel_inlet, angle_x, angle_y, angle_z, previous_angle_x, previous_angle_z)
+
         if sample:
             buffer.append(sample)  # Collect EEG sample
 
