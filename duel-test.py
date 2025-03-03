@@ -1,3 +1,6 @@
+# Description: This script is used to test the ability to control two Tello drones at the same time.
+# It has not been completed yet, but the single functinality is feature complete
+
 from ESP_32_Controller.lib.ESPTelloCLI.ESPSwarm.swarm import TelloSwarm
 import time
 import serial
